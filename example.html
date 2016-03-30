@@ -1,0 +1,36 @@
+<!doctype html>
+<html><body>
+
+<div data-template='foo'>
+  <div class='title'></div>
+  <div class='body'></div>
+</div>
+
+<script>
+  var template = function(name, selectors) {
+    var base = document.querySelector('[data-template=' + name + ']');
+    base.remove();
+    base.removeAttribute('data-template');
+    Array.prototype.map.call(base.querySelectorAll('[data-template]'), function(element) {
+      document.body.appendChild(element);
+    });
+    return function(callback) {
+      var clone = base.cloneNode(true);
+      var elements = { root: clone };
+      for (key in selectors) {
+        elements[key] = clone.querySelector(selectors[key]);
+      }
+      return elements;
+    };
+  };
+
+
+  var t = template('foo', {
+    title: '.title',
+    body: '.body'
+  });
+  var clone = t();
+  clone.title.innerText = 'hello';
+  clone.body.innerText = 'contents';
+  document.body.appendChild(clone.root);
+</script>
